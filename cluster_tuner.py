@@ -120,10 +120,14 @@ class GccFlagsTuner(MeasurementInterface):
                 manipulator.add_parameter(FloatParameter(line[2], line[3], line[4]))
             elif(line[1]=='enum'):
                 manipulator.add_parameter(EnumParameter(line[2],line[3:]))
+            else:
+                raise NameError('Incorrect Configuration file')
         elif(line[0]=='compile'):
             self.gcc_cmd = ' '.join(line[1:])
         elif(line[0]=='run'):
             self.run_cmd = ' '.join(line[1:])
+        else:
+            raise NameError('Incorrect Configuration file')         
 
     def param_parser(self,manipulator):
       with open('configuration.txt', 'r') as f:
@@ -172,10 +176,13 @@ class GccFlagsTuner(MeasurementInterface):
             time.sleep(1)
             job_state = self.cluster.get_state(job_id)[0]
         print job_state
-        assert job_state == "DONE"
-        t = self.cluster.get_state(job_id)[1]
-        shutil.rmtree('job{0}'.format(str(id)))
-        return Result(time=t)
+        if job_state.find('-10')==-1:
+            assert job_state == "DONE"
+            t = self.cluster.get_state(job_id)[1]
+            shutil.rmtree('job{0}'.format(str(id)))
+            return Result(time=t)
+        else:
+            return Result(time= wtime_limit+1)
 
 
     def run_precompiled(self, desired_result, input, limit, compile_result, id):
