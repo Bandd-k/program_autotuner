@@ -13,7 +13,7 @@ Rules:
   * all parameter should be in brackets {}
 
 ### Availble techniques
-Techniques:
+
   * PureRandom
   * ga-OX3
   * ga-OX1
