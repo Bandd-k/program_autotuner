@@ -5,8 +5,10 @@
 # This is an extremely simplified version meant only for tutorials
 #
 
-import opentuner
 import sys
+sys.path.append('/home/hpc/denis/clust/opentuner')
+sys.path.append('/home/hpc/denis/clust/opentuner/opentuner')
+import opentuner
 import shutil
 from opentuner import ConfigurationManipulator
 from opentuner import IntegerParameter
@@ -105,8 +107,8 @@ class ClusterRunner:
 
 
 ##
+name = ''
 class GccFlagsTuner(MeasurementInterface):
-    name = ''
     variables = []
     gcc_cmd = ''
     run_cmd = ''
@@ -130,7 +132,7 @@ class GccFlagsTuner(MeasurementInterface):
             raise NameError('Incorrect Configuration file')         
 
     def param_parser(self,manipulator):
-      with open('configuration.txt', 'r') as f:
+      with open(name, 'r') as f:
         for line in f:
             self.parse_line(line,manipulator)
     cluster = ClusterRunner()
@@ -199,8 +201,8 @@ class GccFlagsTuner(MeasurementInterface):
 
 
 if __name__ == '__main__':
-##  name = sys.argv[1]
-##  sys.argv.remove(name)
+    name = sys.argv[1]
+    sys.argv.remove(name)
     argparser = opentuner.default_argparser()
     GccFlagsTuner.main(argparser.parse_args())
 

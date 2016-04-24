@@ -12,7 +12,7 @@ int main(int argc, const char** argv)
   int a[N][N];
   int b[N][N];
   int c[N][N];
-  std::this_thread::sleep_for(std::chrono::seconds(7));
+  std::this_thread::sleep_for(std::chrono::seconds(1));
   int sum=0;
   for(int k1=0;k1<n;k1+=BLOCK_SIZE)
   {
