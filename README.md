@@ -12,7 +12,7 @@ Rules:
   * before every file add ../
   * all parameter should be in brackets {}
 
-### Availble techniques
+## Availble techniques
 
   * PureRandom
   * ga-OX3
