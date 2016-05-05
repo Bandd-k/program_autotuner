@@ -1,7 +1,5 @@
 #include <stdio.h>
 #include <cstdlib>
-#include <thread>
-#include <chrono>
 
 #define N 500
 
@@ -9,11 +7,10 @@ int main(int argc, const char** argv)
 {
 
   int n = BLOCK_SIZE * (N/BLOCK_SIZE);
-  int a[N][N];
-  int b[N][N];
-  int c[N][N];
-  std::this_thread::sleep_for(std::chrono::seconds(1));
-  int sum=0;
+  double a[N][N];
+  double b[N][N];
+  double c[N][N];
+  double sum = 0;
   for(int k1=0;k1<n;k1+=BLOCK_SIZE)
   {
       for(int j1=0;j1<n;j1+=BLOCK_SIZE)
@@ -26,7 +23,7 @@ int main(int argc, const char** argv)
                   {
                       sum = c[i][j];
                       for(int k=k1;k<k1+BLOCK_SIZE;k++)
-                      {               
+                      {
                           sum += a[i][k] * b[k][j];
                       }
                       c[i][j] = sum;
@@ -34,6 +31,7 @@ int main(int argc, const char** argv)
               }
           }
       }
-         }
+  }
+  printf("%f", c[0][0]);
   return 0;
 }
