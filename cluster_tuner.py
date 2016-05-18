@@ -7,12 +7,6 @@
 
 import sys
 import shutil
-from opentuner import ConfigurationManipulator
-from opentuner import IntegerParameter
-from opentuner import EnumParameter
-from opentuner import MeasurementInterface
-from opentuner import FloatParameter
-from opentuner import Result
 import os
 import subprocess
 import re
@@ -20,6 +14,12 @@ import time
 import logging
 sys.path.append('/home/hpc/denis/clust/opentuner')
 sys.path.append('/home/hpc/denis/clust/opentuner/opentuner')
+from opentuner import ConfigurationManipulator
+from opentuner import IntegerParameter
+from opentuner import EnumParameter
+from opentuner import MeasurementInterface
+from opentuner import FloatParameter
+from opentuner import Result
 import opentuner
 
 
@@ -181,6 +181,7 @@ class GenericClusterTuner(MeasurementInterface):
             assert job_state == "DONE"
         # call run command on cluster
         newrun = self.run_cmd.format(**cfg)
+        newrun = "/usr/bin/time -o clocks -f %e "+newrun
         job_id = self.cluster.submit(newrun, run_dir, nodes, ppn, wtime_limit)
         logging.info('tunerID={0} jobID={1} RunCommand={2}'.format(id, job_id, newrun))
         job_state = None
@@ -189,7 +190,10 @@ class GenericClusterTuner(MeasurementInterface):
             job_state = self.cluster.get_state(job_id)[0]
         if job_state.find('-10') == -1:
             assert job_state == "DONE"
-            t = self.cluster.get_state(job_id)[1]
+            #t = self.cluster.get_state(job_id)[1]
+            # get time of run
+            time_file = open("job{0}/clocks".format(str(id)), "r")
+            t = float(time_file.read())
             logging.info('tunerID={0} Runtime={1}'.format(id, t))
             shutil.rmtree('job{0}'.format(str(id)))
             return Result(time=t)
@@ -219,8 +223,8 @@ if __name__ == '__main__':
         if a.find('{}') != -1:
             sys.argv.remove(a)
     t = sys.argv[-1]
-    if t.isdigit():
+    if t.find('--testTime=')!=-1:
         sys.argv.remove(t)
-        limit = int(t)
+        limit = int(t.replace('--testTime=',''))
     argparser = opentuner.default_argparser()
     GenericClusterTuner.main(argparser.parse_args())
